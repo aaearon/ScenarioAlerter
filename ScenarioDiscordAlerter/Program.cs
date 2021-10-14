@@ -7,6 +7,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Configuration;
 
 namespace ScenarioDiscordAlerter
 {
@@ -14,23 +15,21 @@ namespace ScenarioDiscordAlerter
     {
 
         private static readonly HttpClient client = new HttpClient();
-        public static string discordWebhookUri;
+        private static string discordWebhookUri;
 
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
             string fileToWatch;
 
-            if (args.Length == 0)
-            {
-                // fileToWatch = @"C:\Warhammer Online Age of Reckoning\logs\launcher.log";
-                Console.WriteLine("You must define arguments!");
-                return;
-            }
-            else
-            {
-                fileToWatch = args[0];
-                discordWebhookUri = args[1];
+            fileToWatch = ConfigurationManager.AppSettings.Get("LogFile");
+            discordWebhookUri = ConfigurationManager.AppSettings.Get("WebhookUri");
 
+            if (fileToWatch == null || discordWebhookUri == null)
+            {
+                Console.WriteLine("Ensure that LogFile and WebhookUri is defined in app.config!");
+                Console.WriteLine("Press enter to exit.");
+                Console.ReadLine();
+                return;
             }
 
             string fileDirectory = Path.GetDirectoryName(fileToWatch);
