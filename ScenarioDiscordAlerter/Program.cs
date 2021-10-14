@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace ScenarioDiscordAlerter
@@ -16,7 +17,7 @@ namespace ScenarioDiscordAlerter
         public static string discordWebhookUri;
 
 
-        static Task Main(string[] args)
+        static void Main(string[] args)
         {
             string fileToWatch;
 
@@ -24,7 +25,7 @@ namespace ScenarioDiscordAlerter
             {
                 // fileToWatch = @"C:\Warhammer Online Age of Reckoning\logs\launcher.log";
                 Console.WriteLine("You must define arguments!");
-                return Task.CompletedTask;
+                return;
             }
             else
             {
@@ -50,12 +51,29 @@ namespace ScenarioDiscordAlerter
                      | NotifyFilters.Size;
 
             watcher.Changed += OnChanged;
+            watcher.Error += OnError;
+
             watcher.EnableRaisingEvents = true;
+
+
+            Thread t = new Thread(RefreshFile(fileToWatch));
+            t.IsBackground = true;
+            t.Start();
 
             Console.WriteLine($"Watching {fileToWatch}");
             Console.WriteLine("Press enter to exit.");
             Console.ReadLine();
-            return Task.CompletedTask;
+        }
+
+        private static ParameterizedThreadStart RefreshFile(string path)
+        {
+            while (true)
+            {
+
+                using (var fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                Thread.Sleep(500);
+            }
+
         }
 
         private static async void OnChanged(object sender, FileSystemEventArgs e)
@@ -65,14 +83,27 @@ namespace ScenarioDiscordAlerter
                 return;
             }
 
-            var lastLine = File.ReadLines($"{e.FullPath}").Last();
+            var lastLine = ReadLines($"{e.FullPath}").Last();
             await SendDiscordWebHook(lastLine);
-            //Console.WriteLine(lastLine);
         }
 
+        public static IEnumerable<string> ReadLines(string path)
+        {
+            using (var fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+            using (var sr = new StreamReader(fs, Encoding.UTF8))
+            {
+                string line;
+                while ((line = sr.ReadLine()) != null)
+                {
+                    yield return line;
+                }
+            }
+        }
+
+  
         private static async Task SendDiscordWebHook(string message)
         {
-            Console.WriteLine(message);
+            Console.WriteLine($"Sending Discord Webhook with message: {message}");
 
             string webhookUri = discordWebhookUri;
             Dictionary<string, string> webhookContent = new Dictionary<string, string>();
@@ -81,6 +112,21 @@ namespace ScenarioDiscordAlerter
             var stringContent = new StringContent(json, UnicodeEncoding.UTF8, "application/json");
 
             await client.PostAsync(webhookUri, stringContent);
+        }
+
+        private static void OnError(object sender, ErrorEventArgs e) =>
+    PrintException(e.GetException());
+
+        private static void PrintException(Exception? ex)
+        {
+            if (ex != null)
+            {
+                Console.WriteLine($"Message: {ex.Message}");
+                Console.WriteLine("Stacktrace:");
+                Console.WriteLine(ex.StackTrace);
+                Console.WriteLine();
+                PrintException(ex.InnerException);
+            }
         }
     }
 }

@@ -2,7 +2,7 @@
   "profiles": {
     "ScenarioDiscordAlerter": {
       "commandName": "Project",
-      "commandLineArgs": "\"C:\\Warhammer Online Age of Reckoning\\logs\\launcher.log\" \"https://discord.com/api/webhooks/897762447149121536/9p5-ThBaOIdXeBDPns9iLdZtHYO62g6PUd8d4tGcu-gDfHEzD2WMIb51NNtw-C8hm7xI\""
+      "commandLineArgs": "\"C:\\Warhammer Online Age of Reckoning\\logs\\scenarioAlert.log\" \"https://discord.com/api/webhooks/897762447149121536/9p5-ThBaOIdXeBDPns9iLdZtHYO62g6PUd8d4tGcu-gDfHEzD2WMIb51NNtw-C8hm7xI\""
     }
   }
 }
