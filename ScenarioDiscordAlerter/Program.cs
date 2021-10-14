@@ -16,7 +16,6 @@ namespace ScenarioDiscordAlerter
         private static readonly HttpClient client = new HttpClient();
         public static string discordWebhookUri;
 
-
         static void Main(string[] args)
         {
             string fileToWatch;
@@ -31,9 +30,8 @@ namespace ScenarioDiscordAlerter
             {
                 fileToWatch = args[0];
                 discordWebhookUri = args[1];
-                
-            }
 
+            }
 
             string fileDirectory = Path.GetDirectoryName(fileToWatch);
             string fileName = Path.GetFileName(fileToWatch);
@@ -55,7 +53,6 @@ namespace ScenarioDiscordAlerter
 
             watcher.EnableRaisingEvents = true;
 
-
             Thread t = new Thread(RefreshFile(fileToWatch));
             t.IsBackground = true;
             t.Start();
@@ -71,7 +68,7 @@ namespace ScenarioDiscordAlerter
             {
 
                 using (var fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
-                Thread.Sleep(500);
+                    Thread.Sleep(500);
             }
 
         }
@@ -83,8 +80,11 @@ namespace ScenarioDiscordAlerter
                 return;
             }
 
-            var lastLine = ReadLines($"{e.FullPath}").Last();
-            await SendDiscordWebHook(lastLine);
+            var lastLine = ReadLines($"{e.FullPath}").LastOrDefault();
+            if (lastLine != null)
+            {
+                await SendDiscordWebHook(lastLine);
+            }
         }
 
         public static IEnumerable<string> ReadLines(string path)
@@ -100,7 +100,6 @@ namespace ScenarioDiscordAlerter
             }
         }
 
-  
         private static async Task SendDiscordWebHook(string message)
         {
             Console.WriteLine($"Sending Discord Webhook with message: {message}");
