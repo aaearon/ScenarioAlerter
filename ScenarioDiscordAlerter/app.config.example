@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<configuration>
+  <appSettings>
+    <add key="LogFile" value="C:\Warhammer Online Age of Reckoning\logs\ScenarioAlert.log" /> <!--Full path to the ScenarioAlert.log -->
+    <add key="WebhookUri" value="https://discord.com/api/webhooks/xyz" /> <!-- Full URL for the webhook -->
+  </appSettings>
+</configuration>
