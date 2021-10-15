@@ -16,6 +16,7 @@ namespace ScenarioDiscordAlerter
 
         private static readonly HttpClient client = new HttpClient();
         private static string discordWebhookUri;
+        private static string lastReadLine;
 
         static async Task Main(string[] args)
         {
@@ -80,10 +81,13 @@ namespace ScenarioDiscordAlerter
             }
 
             var lastLine = ReadLines($"{e.FullPath}").LastOrDefault();
-            if (lastLine != null)
+            
+            if (lastLine != null && lastLine != lastReadLine)
             {
                 await SendDiscordWebHook(lastLine);
             }
+
+            lastReadLine = lastLine;
         }
 
         public static IEnumerable<string> ReadLines(string path)
@@ -104,12 +108,14 @@ namespace ScenarioDiscordAlerter
             Console.WriteLine($"Sending Discord Webhook with message: {message}");
 
             string webhookUri = discordWebhookUri;
-            Dictionary<string, string> webhookContent = new Dictionary<string, string>();
-            webhookContent.Add("content", message);
+            Dictionary<string, string> webhookContent = new Dictionary<string, string>
+            {
+                { "content", message }
+            };
             var json = JsonConvert.SerializeObject(webhookContent);
-            var stringContent = new StringContent(json, UnicodeEncoding.UTF8, "application/json");
-
-            await client.PostAsync(webhookUri, stringContent);
+            
+            var response = await client.PostAsync(webhookUri, new StringContent(json, UnicodeEncoding.UTF8, "application/json"));
+            response.EnsureSuccessStatusCode();
         }
 
         private static void OnError(object sender, ErrorEventArgs e) =>
