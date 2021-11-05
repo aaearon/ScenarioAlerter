@@ -53,10 +53,6 @@ namespace ScenarioDiscordAlerter
 
             watcher.EnableRaisingEvents = true;
 
-            Thread t = new Thread(RefreshFile(fileToWatch));
-            t.IsBackground = true;
-            t.Start();
-
             Console.WriteLine($"Watching {fileToWatch}");
             Console.WriteLine("Press enter to exit.");
             Console.ReadLine();
