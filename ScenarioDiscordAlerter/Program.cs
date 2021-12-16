@@ -15,12 +15,13 @@ namespace ScenarioDiscordAlerter
     {
 
         private static readonly HttpClient client = new HttpClient();
+        private static string fileToWatch;
         private static string discordWebhookUri;
         private static string lastReadLine;
 
         static async Task Main(string[] args)
         {
-            string fileToWatch;
+            
 
             fileToWatch = ConfigurationManager.AppSettings.Get("LogFile");
             discordWebhookUri = ConfigurationManager.AppSettings.Get("WebhookUri");
@@ -53,7 +54,7 @@ namespace ScenarioDiscordAlerter
 
             watcher.EnableRaisingEvents = true;
 
-            Thread t = new Thread(RefreshFile(fileToWatch));
+            Thread t = new Thread(RefreshFile);
             t.IsBackground = true;
             t.Start();
 
@@ -62,12 +63,12 @@ namespace ScenarioDiscordAlerter
             Console.ReadLine();
         }
 
-        private static ParameterizedThreadStart RefreshFile(string path)
+        private static void RefreshFile()
         {
             while (true)
             {
 
-                using (var fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                using (var fs = new FileStream(fileToWatch, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
                     Thread.Sleep(500);
             }
 
