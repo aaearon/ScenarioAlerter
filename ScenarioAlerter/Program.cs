@@ -15,7 +15,9 @@ namespace ScenarioAlerter
     {
 
         private static readonly HttpClient client = new HttpClient();
+        
         private static string fileToWatch;
+        private static string alertMethod;
         private static string discordWebhookUri;
         private static string pushoverUser;
         private static string pushoverToken;
@@ -24,20 +26,50 @@ namespace ScenarioAlerter
 
         static async Task Main(string[] args)
         {
-
             fileToWatch = ConfigurationManager.AppSettings.Get("LogFile");
-            discordWebhookUri = ConfigurationManager.AppSettings.Get("WebhookUri");
-            pushoverUser = ConfigurationManager.AppSettings.Get("PushoverUser");
-            pushoverToken = ConfigurationManager.AppSettings.Get("PushoverToken");
 
-            if (fileToWatch == null || discordWebhookUri == null)
+            if (fileToWatch == null)
             {
-                Console.WriteLine("Ensure that LogFile and WebhookUri is defined in app.config!");
+                Console.WriteLine("Ensure that LogFile is defined in app.config!");
                 Console.WriteLine("Press enter to exit.");
                 Console.ReadLine();
                 return;
             }
 
+            alertMethod = ConfigurationManager.AppSettings.Get("AlertMethod");
+
+            if (alertMethod.Equals("Discord")) {
+                discordWebhookUri = ConfigurationManager.AppSettings.Get("DiscordWebhookUri");
+
+                if (discordWebhookUri == null)
+                {
+                    Console.WriteLine("Ensure that DiscordWebhookUri is defined in app.config!");
+                    Console.WriteLine("Press enter to exit.");
+                    Console.ReadLine();
+                    return;
+                }
+
+            } else if (alertMethod.Equals("Pushover"))
+            {
+                pushoverUser = ConfigurationManager.AppSettings.Get("PushoverUser");
+                pushoverToken = ConfigurationManager.AppSettings.Get("PushoverToken");
+
+                if (pushoverUser == null || pushoverToken == null)
+                {
+                    Console.WriteLine("Ensure that both PushoverUser and PushoverToken are defined in app.config!");
+                    Console.WriteLine("Press enter to exit.");
+                    Console.ReadLine();
+                    return;
+                }
+
+            } else
+            {
+                Console.WriteLine("Ensure that AlertMethod is correctly defined in app.config!");
+                Console.WriteLine("Press enter to exit.");
+                Console.ReadLine();
+                return;
+            }
+            
             string fileDirectory = Path.GetDirectoryName(fileToWatch);
             string fileName = Path.GetFileName(fileToWatch);
 
@@ -89,8 +121,12 @@ namespace ScenarioAlerter
 
             if (lastLine != null && lastLine != lastReadLine)
             {
-                //await SendDiscordWebHook($"{lastLine}");
-                await SendPushoverMessage($"{lastLine}");
+                if (alertMethod.Equals("Discord")) {
+                    await SendDiscordWebHook($"{lastLine}");
+                } else
+                {
+                    await SendPushoverMessage($"{lastLine}");
+                }
             }
 
             lastReadLine = lastLine;
