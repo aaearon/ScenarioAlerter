@@ -17,14 +17,19 @@ namespace ScenarioDiscordAlerter
         private static readonly HttpClient client = new HttpClient();
         private static string fileToWatch;
         private static string discordWebhookUri;
+        private static string pushoverUser;
+        private static string pushoverToken;
+        private static readonly string pushoverMessageUri = "https://api.pushover.net/1/messages.json";
         private static string lastReadLine;
 
         static async Task Main(string[] args)
         {
-            
+
 
             fileToWatch = ConfigurationManager.AppSettings.Get("LogFile");
             discordWebhookUri = ConfigurationManager.AppSettings.Get("WebhookUri");
+            pushoverUser = ConfigurationManager.AppSettings.Get("PushoverUser");
+            pushoverToken = ConfigurationManager.AppSettings.Get("PushoverToken");
 
             if (fileToWatch == null || discordWebhookUri == null)
             {
@@ -82,10 +87,11 @@ namespace ScenarioDiscordAlerter
             }
 
             var lastLine = ReadLines($"{e.FullPath}").LastOrDefault();
-            
+
             if (lastLine != null && lastLine != lastReadLine)
             {
-                await SendDiscordWebHook(lastLine);
+                //await SendDiscordWebHook($"{lastLine}");
+                await SendPushoverMessage($"{lastLine}");
             }
 
             lastReadLine = lastLine;
@@ -114,8 +120,24 @@ namespace ScenarioDiscordAlerter
                 { "content", message }
             };
             var json = JsonConvert.SerializeObject(webhookContent);
-            
+
             var response = await client.PostAsync(webhookUri, new StringContent(json, UnicodeEncoding.UTF8, "application/json"));
+            response.EnsureSuccessStatusCode();
+        }
+
+        private static async Task SendPushoverMessage(string message)
+        {
+            Console.WriteLine($"Sending Pushover with message: {message}");
+
+            Dictionary<string, string> messageContent = new Dictionary<string, string>
+            {
+                { "message", message },
+                { "user", pushoverUser },
+                { "token", pushoverToken }
+            };
+
+            var json = JsonConvert.SerializeObject(messageContent);
+            var response = await client.PostAsync(pushoverMessageUri, new StringContent(json, UnicodeEncoding.UTF8, "application/json"));
             response.EnsureSuccessStatusCode();
         }
 

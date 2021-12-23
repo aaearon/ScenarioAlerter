@@ -3,5 +3,7 @@
   <appSettings>
     <add key="LogFile" value="C:\Warhammer Online Age of Reckoning\logs\ScenarioAlert.log" /> <!--Full path to the ScenarioAlert.log -->
     <add key="WebhookUri" value="https://discord.com/api/webhooks/xyz" /> <!-- Full URL for the webhook -->
+    <add key="PushoverUser" value="ueb1e521234567zuso1gk"/> <!-- User token from Pushover dashboard -->
+    <add key="PushoverToken" value="adew3nhga4325326dfis74b4bkczbff9"/>    <!-- Application token from Pushover dashboard -->
   </appSettings>
 </configuration>
