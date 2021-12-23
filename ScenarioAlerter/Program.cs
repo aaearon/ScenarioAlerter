@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -8,8 +7,9 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Configuration;
+using Newtonsoft.Json;
 
-namespace ScenarioDiscordAlerter
+namespace ScenarioAlerter
 {
     class Program
     {
@@ -24,7 +24,6 @@ namespace ScenarioDiscordAlerter
 
         static async Task Main(string[] args)
         {
-
 
             fileToWatch = ConfigurationManager.AppSettings.Get("LogFile");
             discordWebhookUri = ConfigurationManager.AppSettings.Get("WebhookUri");
@@ -113,7 +112,7 @@ namespace ScenarioDiscordAlerter
         private static async Task SendDiscordWebHook(string message)
         {
             Console.WriteLine($"Sending Discord Webhook with message: {message}");
-
+             
             string webhookUri = discordWebhookUri;
             Dictionary<string, string> webhookContent = new Dictionary<string, string>
             {
