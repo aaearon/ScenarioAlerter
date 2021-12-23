@@ -11,7 +11,7 @@ using Newtonsoft.Json;
 
 namespace ScenarioAlerter
 {
-    class Program
+    public class Program
     {
 
         private static readonly HttpClient client = new HttpClient();
@@ -99,6 +99,10 @@ namespace ScenarioAlerter
             Console.ReadLine();
         }
 
+        public static string RemoveTimestampFromLogMessage(string message)
+        {
+            return message.Split("] ")[1];
+        }
         private static void RefreshFile()
         {
             while (true)
@@ -118,14 +122,15 @@ namespace ScenarioAlerter
             }
 
             var lastLine = ReadLines($"{e.FullPath}").LastOrDefault();
+            var message = RemoveTimestampFromLogMessage(lastLine);
 
             if (lastLine != null && lastLine != lastReadLine)
             {
                 if (alertMethod.Equals("Discord")) {
-                    await SendDiscordWebHook($"{lastLine}");
+                    await SendDiscordWebHook($"{message}");
                 } else
                 {
-                    await SendPushoverMessage($"{lastLine}");
+                    await SendPushoverMessage($"{message}");
                 }
             }
 
