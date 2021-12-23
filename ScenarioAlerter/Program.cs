@@ -15,7 +15,6 @@ namespace ScenarioAlerter
     {
 
         private static readonly HttpClient client = new HttpClient();
-        
         private static string fileToWatch;
         private static string alertMethod;
         private static string discordWebhookUri;
@@ -26,6 +25,43 @@ namespace ScenarioAlerter
 
         static async Task Main(string[] args)
         {
+            GetLogFileLocation();
+            GetAlertMethod();
+            SetupFileWatcher(fileToWatch);
+
+            Thread t = new Thread(RefreshFile);
+            t.IsBackground = true;
+            t.Start();
+
+            Console.WriteLine($"Watching {fileToWatch}");
+            Console.WriteLine("Press enter to exit.");
+            Console.ReadLine();
+        }
+
+        private static void SetupFileWatcher(string filePath)
+        {
+            var fileDirectory = Path.GetDirectoryName(filePath);
+            var fileName = Path.GetFileName(filePath);
+
+            using var watcher = new FileSystemWatcher(fileDirectory);
+            watcher.Filter = fileName;
+
+            watcher.NotifyFilter = NotifyFilters.Attributes
+                     | NotifyFilters.CreationTime
+                     | NotifyFilters.DirectoryName
+                     | NotifyFilters.FileName
+                     | NotifyFilters.LastAccess
+                     | NotifyFilters.LastWrite
+                     | NotifyFilters.Security
+                     | NotifyFilters.Size;
+
+            watcher.Changed += OnChanged;
+            watcher.Error += OnError;
+
+            watcher.EnableRaisingEvents = true;
+        }
+
+        private static void GetLogFileLocation() {
             fileToWatch = ConfigurationManager.AppSettings.Get("LogFile");
 
             if (fileToWatch == null)
@@ -36,7 +72,16 @@ namespace ScenarioAlerter
                 return;
             }
 
-            alertMethod = ConfigurationManager.AppSettings.Get("AlertMethod");
+            if (!File.Exists(fileToWatch)) {
+                Console.WriteLine($"No file exists at {fileToWatch}");
+                Console.WriteLine("Press enter to exit.");
+                Console.ReadLine();
+                return;
+            }
+        }
+
+        private static void GetAlertMethod() {
+                        alertMethod = ConfigurationManager.AppSettings.Get("AlertMethod");
 
             if (alertMethod.Equals("Discord")) {
                 discordWebhookUri = ConfigurationManager.AppSettings.Get("DiscordWebhookUri");
@@ -69,34 +114,6 @@ namespace ScenarioAlerter
                 Console.ReadLine();
                 return;
             }
-            
-            string fileDirectory = Path.GetDirectoryName(fileToWatch);
-            string fileName = Path.GetFileName(fileToWatch);
-
-            using var watcher = new FileSystemWatcher(fileDirectory);
-            watcher.Filter = fileName;
-
-            watcher.NotifyFilter = NotifyFilters.Attributes
-                     | NotifyFilters.CreationTime
-                     | NotifyFilters.DirectoryName
-                     | NotifyFilters.FileName
-                     | NotifyFilters.LastAccess
-                     | NotifyFilters.LastWrite
-                     | NotifyFilters.Security
-                     | NotifyFilters.Size;
-
-            watcher.Changed += OnChanged;
-            watcher.Error += OnError;
-
-            watcher.EnableRaisingEvents = true;
-
-            Thread t = new Thread(RefreshFile);
-            t.IsBackground = true;
-            t.Start();
-
-            Console.WriteLine($"Watching {fileToWatch}");
-            Console.WriteLine("Press enter to exit.");
-            Console.ReadLine();
         }
 
         public static string RemoveTimestampFromLogMessage(string message)
@@ -153,7 +170,7 @@ namespace ScenarioAlerter
         private static async Task SendDiscordWebHook(string message)
         {
             Console.WriteLine($"Sending Discord Webhook with message: {message}");
-             
+
             string webhookUri = discordWebhookUri;
             Dictionary<string, string> webhookContent = new Dictionary<string, string>
             {
