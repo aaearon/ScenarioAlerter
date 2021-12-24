@@ -27,7 +27,28 @@ namespace ScenarioAlerter
         {
             GetLogFileLocation();
             GetAlertMethod();
-            SetupFileWatcher(fileToWatch);
+            // FileWatcher not working when called from another method. Need to troubleshoot.
+            //SetupFileWatcher(fileToWatch);
+
+            var fileDirectory = Path.GetDirectoryName(fileToWatch);
+            var fileName = Path.GetFileName(fileToWatch);
+
+            using var watcher = new FileSystemWatcher(fileDirectory);
+            watcher.Filter = fileName;
+
+            watcher.NotifyFilter = NotifyFilters.Attributes
+                     | NotifyFilters.CreationTime
+                     | NotifyFilters.DirectoryName
+                     | NotifyFilters.FileName
+                     | NotifyFilters.LastAccess
+                     | NotifyFilters.LastWrite
+                     | NotifyFilters.Security
+                     | NotifyFilters.Size;
+
+            watcher.Changed += OnChanged;
+            watcher.Error += OnError;
+
+            watcher.EnableRaisingEvents = true;
 
             Thread t = new Thread(RefreshFile);
             t.IsBackground = true;
@@ -81,7 +102,7 @@ namespace ScenarioAlerter
         }
 
         private static void GetAlertMethod() {
-                        alertMethod = ConfigurationManager.AppSettings.Get("AlertMethod");
+            alertMethod = ConfigurationManager.AppSettings.Get("AlertMethod");
 
             if (alertMethod.Equals("Discord")) {
                 discordWebhookUri = ConfigurationManager.AppSettings.Get("DiscordWebhookUri");
@@ -93,6 +114,8 @@ namespace ScenarioAlerter
                     Console.ReadLine();
                     return;
                 }
+
+                Console.WriteLine("Sending alerts via Discord.");
 
             } else if (alertMethod.Equals("Pushover"))
             {
@@ -106,6 +129,8 @@ namespace ScenarioAlerter
                     Console.ReadLine();
                     return;
                 }
+
+                Console.WriteLine("Sending alerts via Pushover.");
 
             } else
             {
@@ -141,7 +166,7 @@ namespace ScenarioAlerter
             var lastLine = ReadLines($"{e.FullPath}").LastOrDefault();
             var message = RemoveTimestampFromLogMessage(lastLine);
 
-            if (lastLine != null && lastLine != lastReadLine)
+            if (message != null && lastLine != lastReadLine)
             {
                 if (alertMethod.Equals("Discord")) {
                     await SendDiscordWebHook($"{message}");
