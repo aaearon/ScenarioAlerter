@@ -1,10 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <configuration>
-  <appSettings>
-    <add key="LogFile" value="C:\Warhammer Online Age of Reckoning\logs\ScenarioAlert.log" /> <!--Full path to the ScenarioAlert.log -->
-    <add key="AlertMethod" value="Pushover" /> <!-- Determine where the message will be sent. Valid values are Pushover or Discord -->
-    <add key="DiscordWebhookUri" value="https://discord.com/api/webhooks/xyz" /> <!-- Full URL for the webhook -->
-    <add key="PushoverUser" value="ueb1e521234567zuso1gk"/> <!-- User token from Pushover dashboard -->
-    <add key="PushoverToken" value="adew3nhga4325326dfis74b4bkczbff9"/>    <!-- Application token from Pushover dashboard -->
-  </appSettings>
+  <logFile>C:\Warhammer Online Age of Reckoning\logs\ScenarioAlert.log</logFile> <!-- Full path to the log file that ScenarioAlert creates -->
+  <alertMethod>Pushover</alertMethod> <!-- Alert method -->
+  <discordConfig>
+    <webhookUri></webhookUri> <!-- Looks something like https://discord.com/api/webhooks/898259049185943573/g7zTn-4JFK0M1X345345234fC_42MeZtJBzlvVLuk45soxletfVmydqwdti5sIyS  -->
+  </discordConfig>
+  <pushoverConfig>
+    <userToken></userToken> <!-- Looks something like ueb1e52pz9x243256pg4az2zuso1gk  -->
+  </pushoverConfig>
 </configuration>
