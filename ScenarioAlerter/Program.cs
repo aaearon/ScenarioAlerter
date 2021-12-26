@@ -12,14 +12,15 @@ IHost host = Host.CreateDefaultBuilder(args)
     })
     .ConfigureServices((_, services) =>
     {
+        services.AddHttpClient();
+        services.AddLogging();
+
         // "Options" pattern    
         services.AddSingleton(new AlerterOptions
         {
             LogFile = _.Configuration["logFile"],
         })
-        .AddSingleton<IScenarioAlerter, Alerter>()
-        .AddHttpClient()
-        .AddLogging();
+        .AddSingleton<IScenarioAlerter, Alerter>();
 
         var alertMethod = _.Configuration["alertMethod"];
 
@@ -36,8 +37,7 @@ IHost host = Host.CreateDefaultBuilder(args)
             services.AddSingleton(new PushoverConfig
             {
                 UserToken = _.Configuration["pushoverConfig:userToken"],
-                // Environmental variable used at build time.
-                ApplicationToken = _.Configuration["PUSHOVER_APPLICATIONTOKEN"]
+                ApplicationToken = _.Configuration["pushoverConfig:applicationToken"],
             });
             services.AddSingleton<IAlertService, PushoverService>();
         }
