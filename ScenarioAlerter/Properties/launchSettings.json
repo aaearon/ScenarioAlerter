@@ -1,13 +1,10 @@
 {
   "profiles": {
     "ScenarioAlerter": {
-      "commandName": "Project"
-    },
-    "WSL": {
-      "commandName": "WSL2",
-      "environmentVariables": {},
-      "distributionName": ""
+      "commandName": "Project",
+      "environmentVariables": {
+        "PUSHOVER_APPLICATIONTOKEN": "replaceme"
+      }
     }
-
   }
 }
