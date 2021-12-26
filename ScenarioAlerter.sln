@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ScenarioAlerter", "Scenario
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ScenarioAlerter.AlertServices", "ScenarioAlerter.AlertProviders\ScenarioAlerter.AlertServices.csproj", "{BC9E642B-F6C4-476C-9038-BEE53096318B}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ScenarioAlerter.Tests", "ScenarioAlerter.Tests\ScenarioAlerter.Tests.csproj", "{C164C875-2D4F-4826-8058-892E51C17652}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{BC9E642B-F6C4-476C-9038-BEE53096318B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BC9E642B-F6C4-476C-9038-BEE53096318B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BC9E642B-F6C4-476C-9038-BEE53096318B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C164C875-2D4F-4826-8058-892E51C17652}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C164C875-2D4F-4826-8058-892E51C17652}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C164C875-2D4F-4826-8058-892E51C17652}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C164C875-2D4F-4826-8058-892E51C17652}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
