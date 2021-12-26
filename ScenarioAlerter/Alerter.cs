@@ -23,13 +23,15 @@ namespace ScenarioAlerter
         private string LogFile;
         private FileSystemWatcher watcher;
 
-        public Alerter(ILogger<IScenarioAlerter> logger, IAlertService alertService, AlerterOptions options)
+        public Alerter(ILogger<IScenarioAlerter> logger, IAlertService alertService,
+            AlerterOptions options)
         {
             _logger = logger;
             _alertService = alertService;
             _options = options;
 
             LogFile = _options.LogFile;
+            ValidateLogFilePath(LogFile);
 
             this.Run();
         }
@@ -61,10 +63,20 @@ namespace ScenarioAlerter
             t.Start();
         }
 
+        private void ValidateLogFilePath(string path)
+        {
+            if (!File.Exists(path))
+            {
+                _logger.LogCritical($"No file at {path} exists!");
+                throw new FileNotFoundException($"No file at {path} exists!");
+            }
+        }
+
         public static string RemoveTimestampFromLogMessage(string message)
         {
             return message.Split("] ")[1];
         }
+
         private void RefreshFile()
         {
             while (true)
@@ -77,13 +89,24 @@ namespace ScenarioAlerter
 
         private void OnChanged(object sender, FileSystemEventArgs e)
         {
+
             if (e.ChangeType != WatcherChangeTypes.Changed)
             {
                 return;
             }
 
             var lastLine = ReadLines($"{e.FullPath}").LastOrDefault();
-            var message = RemoveTimestampFromLogMessage(lastLine);
+
+            string message = null;
+            try
+            {
+                message = RemoveTimestampFromLogMessage(lastLine);
+            }
+            catch
+            {
+                _logger.LogWarning("No timestamp was found. Not a valid log message.");
+            }
+
 
             if (message != null && lastLine != LastReadLine)
             {
