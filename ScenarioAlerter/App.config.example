@@ -7,6 +7,6 @@
   </discordConfig>
   <pushoverConfig>
     <userToken></userToken> <!-- Looks something like ueb1e52pz9x243256pg4az2zuso1gk  -->
-    <applicationToken></applicationToken>
+    <applicationToken></applicationToken> <!-- Looks something like adew3n43564578886576ssdfi5684b4bkczbff9  -->
   </pushoverConfig>
 </configuration>

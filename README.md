@@ -4,10 +4,11 @@ Inspired by the original [ScenarioAlerter](https://www.returnofreckoning.com/for
 
 ## Usage
 
-1. Copy over the `ScenarioAlerter` folder in the `WarhammerAddOn` folder to `Interface\AddOns\` under your Warhammer Online game folder.
 1. [Download and install the .NET 6.0 Runtime.](https://dotnet.microsoft.com/en-us/download)
+1. Download and extract a release from the [Releases](https://github.com/aaearon/ScenarioAlerter/releases) section.
+1. Inside the zip you downloaded, copy over the `ScenarioAlerter` folder in the `WarhammerAddOn` folder to `Interface\AddOns\` under your Warhammer Online game folder.
 1. Rename `app.config.example` to `app.config`.
-1. Define the location of the logFile (keep `\logs\ScenarioAlerter.log`), the method you want to recieve the alert by in `alertMethod` (Pushover or Discord), and the method-specific settings. Read further for information on each method.
+1. Define the location of the logFile (modify the path to where you have Warhammer Online installed but keep `\logs\ScenarioAlerter.log`), the method you want to recieve the alert by in `alertMethod` (Pushover or Discord), and the method-specific settings. Read further for information on each method.
 1. After correctly defining the values in `app.config`, start `ScenarioAlerter.exe` and test the alert method via executing `/script ScenarioAlerter.RecordScPop()` ingame. You should get the message "Pop! Scenario: " via your selected alert method (when a scenario actually pops, the name of the scenario will be included in the alert.)
 
 ### Discord
