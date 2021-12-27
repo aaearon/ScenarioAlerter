@@ -387,5 +387,5 @@ FodyWeavers.xsd
 .idea/
 *.sln.iml
 
-# Do not accidently commit Discord Webhook Uri
-app.config
+# Do not accidently commit secrets
+App.config
