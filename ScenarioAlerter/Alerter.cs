@@ -1,10 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using ScenarioAlerter.AlertServices;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace ScenarioAlerter
 {
@@ -97,22 +93,17 @@ namespace ScenarioAlerter
 
             var lastLine = ReadLines($"{e.FullPath}").LastOrDefault();
 
-            string message = null;
-            try
+            if (lastLine != null && lastLine != LastReadLine)
             {
-                message = RemoveTimestampFromLogMessage(lastLine);
-            }
-            catch
-            {
-                _logger.LogWarning("No timestamp was found. Not a valid log message.");
-            }
-
-
-            if (message != null && lastLine != LastReadLine)
-            {
-  
-                _alertService.SendAlertAsync($"{message}");
-
+                try
+                {
+                    var message = RemoveTimestampFromLogMessage(lastLine);
+                    _alertService.SendAlertAsync($"{message}");
+                }
+                catch
+                {
+                    _logger.LogWarning($"No timestamp was found. Not a valid log message. An alert will not be sent for message: {lastLine}");
+                }
             }
 
             LastReadLine = lastLine;

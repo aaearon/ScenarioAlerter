@@ -1,10 +1,7 @@
 {
   "profiles": {
     "ScenarioAlerter": {
-      "commandName": "Project",
-      "environmentVariables": {
-        "PUSHOVER_APPLICATIONTOKEN": "replaceme"
-      }
+      "commandName": "Project"
     }
   }
 }

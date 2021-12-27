@@ -1,8 +1,8 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Configuration;
-using ScenarioAlerter.AlertServices;
 using ScenarioAlerter;
+using ScenarioAlerter.AlertServices;
 
 
 IHost host = Host.CreateDefaultBuilder(args)
