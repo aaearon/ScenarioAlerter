@@ -2,6 +2,13 @@
 
 Inspired by the original [ScenarioAlerter](https://www.returnofreckoning.com/forum/viewtopic.php?f=66&t=20524). It monitors the log file that the ScenarioAlerter addon creates and sends a message via the provided Discord Webhook or sends a push notification via [Pushover](https://pushover.net/) which will alert you of a scenario pop.
 
+ScenarioAlerter is made up of two parts:
+
+* A Warhammer Online AddOn that when a scenario pops writes the event to a log file.
+* A .NET console app that monitors the log file for new events and when a new event is written sends an alert in the form of either a Discord webhook or Pushover notification.
+
+Both parts are needed.
+
 ## Usage
 
 1. [Download and install the .NET 6.0 Runtime.](https://dotnet.microsoft.com/en-us/download)
